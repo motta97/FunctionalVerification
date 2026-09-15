@@ -39,7 +39,7 @@ the monitors was sampling the signals at the positive edge of the clock, which i
 
 The solution:
 
-introduce #1 after the posedge of the clk in the monitors, so it only samples after 1 time step of the positive edge of the clock guranteeing that result(count in this case) is ready.
+introduce #1 after the posedge of the clk in the monitors, so it only samples after 1 time step of the positive edge of the clock guranteeing that result(count in this case) is ready.(off-by-one-cycle bugs are the most common UVM bug)
 
 
 Simple design but good as a practice, looking forward for more inshallah :)
