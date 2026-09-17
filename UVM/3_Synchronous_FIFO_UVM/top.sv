@@ -19,9 +19,10 @@ module top;
         clk = 1;
         uvm_config_db #(virtual interface fifo_ifc#(DEPTH, WIDTH))::set(null, "*", "ifc", ifc);
         fork 
-            forever begin
-                #5 clk= ~clk;
-            end
+                forever begin
+                    #5 clk= ~clk;
+                end
+
         join_none
 
     run_test();
