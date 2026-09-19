@@ -1,0 +1,43 @@
+The Bug:
+when I run the fifo_stress_test, I notices that the sequence is not driving data to the
+DUT, even I am clearly assigning values to transaction and sending it to the
+driver via the sequencer.
+
+The solution:
+I was just using non-blocking assignments between the start_item(...) and finish_item(...).
+This made the finish_item get called before even the assignment happen. The solution is simply
+to use blocking assignments.
+
+
+
+The Bug:
+I had the following error when tried to run the full_stress_test
+ # UVM_FATAL @ 0: fifo_sequencer_h@@full_stress_sequence_h [NULLITM] attempting
+to start a null item from sequence 'fifo_sequencer_h.full_stress_sequence_h' 
+It turns out that fifo_sequence_h is assigning to a null item, I was instantiating
+the command_sequence_item inside the build_phase which is wrong.
+
+The Solution:
+Instantiate the command_sequence_item everytime you are about to join the 
+start_item(...) finish_item(...) block, this way you avoid such bugs
+
+
+
+The Bug:
+When trying to run the random_test and having feedback from the DUT, Calling the
+blocking get() method inside the random_sequence was blocking forever and the
+sequence never get the result_item from the result monitor, why this happened? 
+I've connected the fifo inside the sequence to the result_port of the agent, why
+it's not receiving the result items and rest of components are getting their items
+normally?
+
+The Solution:
+Well I was doing the line  env_h.agent_h.result_port.connect(random_sequence_h.result_fifo_h.analysis_export);
+that connects the fifo of the sequence to the result port INSIDE the run_phase, which is wrong,
+run_phase should NOT contain any instantiation or components connection. Just moving the line
+mentioned to the connect_phase was enough to get the sequence to recieve its items
+normally.
+
+The lesson:
+use build_phase to instantiate components, connect_phase to connect components,
+and run_phase for the actual simulation.
